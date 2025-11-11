@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Accounts Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <aside class="w-64 bg-gray-900 text-white flex-shrink-0 flex flex-col" id="sidebar">
+            <div class="h-20 flex items-center justify-center text-2xl font-bold border-b border-gray-700">
+                <i class="fas fa-school mr-3"></i>
+                <span>School EMS</span>
+            </div>
+            <nav class="flex-1 overflow-y-auto">
+                <ul class="py-4 space-y-2">
+                    <li><a href="#dashboard" class="nav-link active flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-tachometer-alt w-6 text-center mr-3"></i><span>Dashboard</span></a></li>
+                    <li><a href="#students" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-user-graduate w-6 text-center mr-3"></i><span>Students</span></a></li>
+                    <li><a href="#fee-management" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-file-invoice-dollar w-6 text-center mr-3"></i><span>Fee Management</span></a></li>
+                    <li><a href="#student-fee" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-money-bill-wave w-6 text-center mr-3"></i><span>Student Fee</span></a></li>
+                    <li><a href="#vehicle" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-bus w-6 text-center mr-3"></i><span>Vehicle</span></a></li>
+                    <li><a href="#payments" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-credit-card w-6 text-center mr-3"></i><span>Payments</span></a></li>
+                    <li><a href="#invoice" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-file-alt w-6 text-center mr-3"></i><span>Invoice</span></a></li>
+                    <li><a href="#expenses" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-shopping-cart w-6 text-center mr-3"></i><span>Expenses</span></a></li>
+                    <li><a href="#reports" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-chart-bar w-6 text-center mr-3"></i><span>Reports</span></a></li>
+                    <li><a href="#about" class="nav-link flex items-center px-6 py-3 hover:bg-gray-700"><i class="fas fa-info-circle w-6 text-center mr-3"></i><span>About</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-20 bg-white shadow-md flex items-center justify-between px-6">
+                <div class="flex items-center">
+                    <button id="menu-toggle" class="text-gray-600 focus:outline-none lg:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 id="page-title" class="text-2xl font-semibold text-gray-800 ml-4">Dashboard</h1>
+                </div>
+                </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                
+                <section id="dashboard" class="page active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center">
+                            <i class="fas fa-money-bill-wave fa-3x text-teal-500 mr-4"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Balance (Cash)</p>
+                                <p id="dash-balance-cash" class="text-2xl font-bold text-gray-800">₹0.00</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center">
+                            <i class="fas fa-chart-line fa-3x text-green-500 mr-4"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Income</p>
+                                <p id="dash-total-income" class="text-2xl font-bold text-gray-800">₹0.00</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center">
+                            <i class="fas fa-chart-pie fa-3x text-red-500 mr-4"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Expenses</p>
+                                <p id="dash-total-expenses" class="text-2xl font-bold text-gray-800">₹0.00</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center">
+                            <i class="fas fa-university fa-3x text-purple-500 mr-4"></i>
+                            <div>
+                                <p class="text-sm text-gray-500">Balance (Bank)</p>
+                                <p id="dash-balance-bank" class="text-2xl font-bold text-gray-800">₹0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-xl font-semibold mb-4">Income vs Expense (Last 30 Days)</h3>
+                            <canvas id="incomeExpenseChart"></canvas>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-xl font-semibold mb-4">Due Payments</h3>
+                            <div id="dash-due-payments-list" class="space-y-4 max-h-80 overflow-y-auto">
+                                <p class="text-gray-500">No due payments found.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg mt-6">
+                        <h3 class="text-xl font-semibold mb-4">Recent Payments</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-recent-payments-table" class="bg-white divide-y divide-gray-200">
+                                    <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No recent payments.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="students" class="page hidden">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-2">
+                        <h2 class="text-2xl font-semibold text-gray-800">Student Management</h2>
+                        <div>
+                            <button id="manage-class-btn" class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-700 transition duration-300 mr-2">
+                                <i class="fas fa-chalkboard-teacher mr-2"></i>Manage Classes
+                            </button>
+                            <button id="add-student-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300">
+                                <i class="fas fa-plus mr-2"></i>Add New Student
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adm No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-list-table" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="fee-management" class="page hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold">Fee Types</h3>
+                                <button id="add-fee-type-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+                                    <i class="fas fa-plus mr-2"></i>Add Fee Type
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Section</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fee-types-table" class="bg-white divide-y divide-gray-200">
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold">Fee Groups</h3>
+                                <button id="add-fee-group-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700" disabled>
+                                    <i class="fas fa-plus mr-2"></i>Add Fee Group
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Group Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fee Types</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fee-groups-table" class="bg-white divide-y divide-gray-200">
+                                        <tr><td colspan="3" class="px-4 py-4 text-center text-gray-500">Fee Groups not yet implemented.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="student-fee" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold mb-4 md:mb-0">Student Fee Records</h3>
+                            <div class="flex items-center space-x-4">
+                                <select id="student-fee-year" class="form-select">
+                                    <option value="2025-2026">2025-2026</option>
+                                    <option value="2024-2025">2024-2025</option>
+                                </select>
+                                <select id="student-fee-class" class="form-select">
+                                    <option value="All">All Classes</option>
+                                </select>
+                                <button id="student-fee-csv-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">
+                                    <i class="fas fa-file-csv mr-2"></i>Download CSV
+                                </button>
+                                <button id="student-fee-pdf-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">
+                                    <i class="fas fa-file-pdf mr-2"></i>Download PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="student-fee-table">
+                                <thead class="bg-gray-50" id="student-fee-table-head">
+                                    </thead>
+                                <tbody id="student-fee-table-body" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                                <tfoot class="bg-gray-100 font-bold" id="student-fee-table-foot">
+                                    </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="vehicle" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex flex-wrap justify-between items-center mb-4 gap-4">
+                            <h3 class="text-xl font-semibold">Vehicle Fee Tracking</h3>
+                            <div class="flex flex-wrap items-center space-x-0 md:space-x-2 gap-2">
+                                <select id="vehicle-year" class="form-select">
+                                    <option value="2025-2026">2025-2026</option>
+                                </select>
+                                <select id="vehicle-class-filter" class="form-select">
+                                    <option value="All">All Classes</option>
+                                </select>
+                                <select id="vehicle-route-filter" class="form-select">
+                                    <option value="All">All Routes</option>
+                                </select>
+                                <button id="vehicle-add-student-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+                                    <i class="fas fa-plus mr-2"></i>Add Student
+                                </button>
+                                <button id="vehicle-manage-routes-btn" class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-700">
+                                    <i class="fas fa-route mr-2"></i>Manage Routes
+                                </button>
+                                <button id="vehicle-csv-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">
+                                    <i class="fas fa-file-csv mr-2"></i>CSV
+                                </button>
+                                <button id="vehicle-pdf-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">
+                                    <i class="fas fa-file-pdf mr-2"></i>PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto" id="vehicle-fee-table-container">
+                        </div>
+                    </div>
+                </section>
+
+                <section id="payments" class="page hidden">
+                     <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                            <h3 class="text-xl font-semibold">Record & View Payments</h3>
+                            <div class="flex flex-wrap items-center space-x-0 md:space-x-2 gap-2">
+                                <select id="payment-class-filter" class="form-select">
+                                    <option value="All">All Classes</option>
+                                </select>
+                                <select id="payment-status-filter" class="form-select">
+                                    <option value="All">All Status</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Partial">Partial</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                                <input type="text" id="payment-student-search" placeholder="Search student..." class="form-input">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inv #</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fee Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paid</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Balance</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payments-table-body" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="invoice" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                            <h3 class="text-xl font-semibold">Invoices</h3>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" id="invoice-search" placeholder="Search by Invoice #" class="form-input">
+                                <button id="create-manual-invoice-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 whitespace-nowrap">
+                                    <i class="fas fa-plus mr-2"></i>Create Grouped Payment
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inv #</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount Paid</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoice-list-table" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="expenses" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold">Expense Management</h3>
+                            <button id="add-expense-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+                                <i class="fas fa-plus mr-2"></i>Add Expense
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pay Mode</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expense-list-table" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="reports" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Transaction Reports</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <input type="text" id="report-start-date" class="form-input" placeholder="Start Date">
+                            <input type="text" id="report-end-date" class="form-input" placeholder="End Date">
+                            <select id="report-type" class="form-select">
+                                <option value="All">All Types</option>
+                                <option value="Income">Income</option>
+                                <option value="Expense">Expense</option>
+                            </select>
+                            <select id="report-pay-mode" class="form-select">
+                                <option value="All">All Pay Modes</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Online">Online</option>
+                                <option value="Card">Card</option>
+                            </select>
+                            <input type="text" id="report-search" class="form-input md:col-span-2" placeholder="Search Description/Student...">
+                            <button id="report-filter-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">Apply Filters</button>
+                            <button id="report-export-csv-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">
+                                <i class="fas fa-file-csv mr-2"></i>Export CSV
+                            </button>
+                            <button id="report-export-pdf-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">
+                                <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="report-table">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category/Fee</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Method</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Desc/Student</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inv/Bill #</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="report-table-body" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                                <tfoot class="bg-gray-100 font-bold">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-3 text-right">Total Income:</td>
+                                        <td id="report-total-income" class="px-6 py-3">₹0.00</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-3 text-right">Total Expense:</td>
+                                        <td id="report-total-expense" class="px-6 py-3">₹0.00</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-3 text-right text-lg">Net:</td>
+                                        <td id="report-net-total" class="px-6 py-3 text-lg">₹0.00</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="about" class="page hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-semibold text-gray-800">School Information</h2>
+                            <button id="edit-school-info-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+                                <i class="fas fa-edit mr-2"></i>Edit Info
+                            </button>
+                        </div>
+                        
+                        <form id="school-info-form">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="school-name" class="block text-sm font-medium text-gray-700">School Name</label>
+                                    <input type="text" id="school-name" class="form-input mt-1" readonly>
+                                </div>
+                                <div>
+                                    <label for="school-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                    <input type="tel" id="school-phone" class="form-input mt-1" readonly>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="school-address" class="block text-sm font-medium text-gray-700">Address</label>
+                                    <input type="text" id="school-address" class="form-input mt-1" readonly>
+                                </div>
+                                <div>
+                                    <label for="school-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="school-email" class="form-input mt-1" readonly>
+                                </div>
+                                <div>
+                                    <label for="school-whatsapp" class="block text-sm font-medium text-gray-700">WhatsApp Number</label>
+                                    <input type="tel" id="school-whatsapp" class="form-input mt-1" readonly>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="school-website" class="block text-sm font-medium text-gray-700">Website</label>
+                                    <input type="text" id="school-website" class="form-input mt-1" readonly>
+                                </div>
+                            </div>
+                            <div class="mt-6 text-right">
+                                <button type="submit" id="save-school-info-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 hidden">
+                                    <i class="fas fa-save mr-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                
+            </main>
+        </div>
+    </div>
+
+    <div id="student-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="student-modal-title" class="text-xl font-semibold mb-4">Add New Student</h3>
+            <form id="student-form">
+                <input type="hidden" id="student-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="student-name" placeholder="Student Name" class="form-input" required>
+                    <input type="text" id="student-adm-no" placeholder="Admission No" class="form-input" required>
+                    <select id="student-class" class="form-select" required>
+                        <option value="">Select Class</option>
+                    </select>
+                    <input type="text" id="student-parent-name" placeholder="Parent Name" class="form-input" required>
+                    <input type="tel" id="student-whatsapp" placeholder="WhatsApp Number" class="form-input" required>
+                    <input type="tel" id="student-contact" placeholder="Alternate Contact" class="form-input">
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="fee-type-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="fee-type-modal-title" class="text-xl font-semibold mb-4">Add Fee Type</h3>
+            <form id="fee-type-form">
+                <input type="hidden" id="fee-type-id">
+                <div class="space-y-4">
+                    <input type="text" id="fee-type-name" placeholder="Fee Name (e.g., Tuition Fee)" class="form-input" required>
+                    <select id="fee-type-section" class="form-select" required>
+                        <option value="All">All Classes</option>
+                    </select>
+                    <input type="number" id="fee-type-amount" placeholder="Amount" class="form-input" required>
+                    <input type="text" id="fee-type-remind-date" placeholder="Remind Date" class="form-input date-picker" required>
+                    <input type="text" id="fee-type-due-date" placeholder="Due Date" class="form-input date-picker" required>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Save Fee Type</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="manage-routes-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <h3 class="text-xl font-semibold mb-4">Manage Routes</h3>
+            <form id="add-route-form" class="flex items-center space-x-2 mb-4">
+                <input type="text" id="route-name" placeholder="Route Name (e.g., Route 1)" class="form-input flex-1" required>
+                <input type="text" id="route-driver" placeholder="Driver (e.g., Raju)" class="form-input flex-1" required>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add</button>
+            </form>
+            <div class="max-h-64 overflow-y-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Route</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Driver</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routes-list-table" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-vehicle-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <h3 class="text-xl font-semibold mb-4">Edit Vehicle Assignment</h3>
+            <form id="edit-vehicle-form">
+                <input type="hidden" id="vehicle-student-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Student</label>
+                        <input type="text" id="vehicle-modal-student-name" class="form-input" readonly>
+                    </div>
+                    <div>
+                        <label for="vehicle-modal-route" class="block text-sm font-medium text-gray-700">Route</label>
+                        <select id="vehicle-modal-route" class="form-select" required>
+                            </select>
+                    </div>
+                    <div>
+                        <label for="vehicle-modal-fee" class="block text-sm font-medium text-gray-700">Monthly Fee</label>
+                        <input type="number" id="vehicle-modal-fee" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Months to Apply Changes</label>
+                        <div id="vehicle-modal-months" class="grid grid-cols-4 gap-2 mt-2">
+                            </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="add-student-vehicle-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <h3 class="text-xl font-semibold mb-4">Add Student to Vehicle Route</h3>
+            <form id="add-student-vehicle-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="vehicle-add-student-select" class="block text-sm font-medium text-gray-700">Student</label>
+                        <select id="vehicle-add-student-select" class="form-select" required>
+                            <option value="">Select Student</option>
+                            </select>
+                    </div>
+                    <div>
+                        <label for="vehicle-add-route-select" class="block text-sm font-medium text-gray-700">Route</label>
+                        <select id="vehicle-add-route-select" class="form-select" required>
+                            <option value="">Select Route</option>
+                            </select>
+                    </div>
+                    <div>
+                        <label for="vehicle-add-monthly-fee" class="block text-sm font-medium text-gray-700">Monthly Fee</label>
+                        <input type="number" id="vehicle-add-monthly-fee" class="form-input" placeholder="Enter monthly fee" required>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="make-payment-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold mb-4">Make Payment</h3>
+            <form id="make-payment-form">
+                <input type="hidden" id="payment-fee-entry-id">
+                <div class="space-y-4">
+                    <p><strong>Student:</strong> <span id="payment-modal-student"></span></p>
+                    <p><strong>Fee Type:</strong> <span id="payment-modal-fee-type"></span></p>
+                    <div class="grid grid-cols-3 gap-4">
+                        <p><strong>Total Due:</strong> <span id="payment-modal-total-due"></span></p>
+                        <p><strong>Already Paid:</strong> <span id="payment-modal-already-paid"></span></p>
+                        <p><strong>Balance:</strong> <span id="payment-modal-balance"></span></p>
+                    </div>
+                    <hr>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="payment-modal-invoice" placeholder="Invoice Number (manual)" class="form-input">
+                        <input type="text" id="payment-modal-date" placeholder="Payment Date" class="form-input date-picker" required>
+                        <input type="number" id="payment-modal-amount" placeholder="Amount Paying" class="form-input" required>
+                        <select id="payment-modal-method" class="form-select" required>
+                            <option value="Cash">Cash</option>
+                            <option value="Online">Online</option>
+                            <option value="Card">Card</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Record Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="expense-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="expense-modal-title" class="text-xl font-semibold mb-4">Add Expense</h3>
+            <form id="expense-form">
+                <input type="hidden" id="expense-id">
+                <div class="space-y-4">
+                    <input type="text" id="expense-date" placeholder="Date" class="form-input date-picker" required>
+                    <input type="text" id="expense-category" placeholder="Category (e.g., Staff Salary)" class="form-input" required>
+                    <input type="text" id="expense-description" placeholder="Description" class="form-input">
+                    <input type="number" id="expense-amount" placeholder="Amount" class="form-input" required>
+                    <select id="expense-pay-mode" class="form-select" required>
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
+                        <option value="Card">Card</option>
+                    </select>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="invoice-view-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div id="invoice-printable-area" class="bg-white p-8 rounded-lg shadow-lg border border-gray-300 relative">
+                
+                <div id="invoice-paid-stamp" class="absolute top-8 right-8">
+                    <span class="text-8xl font-bold text-green-500/30 transform -rotate-12">PAID</span>
+                </div>
+
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 id="invoice-school-name" class="text-2xl font-bold text-gray-800">School Name</h1>
+                        <p id="invoice-school-address" class="text-gray-600 text-sm">123 School Address, City</p>
+                        <p id="invoice-school-contact" class="text-gray-600 text-sm">contact@school.com | +91 9876543210</p>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="text-3xl font-bold text-gray-700">RECEIPT</h2>
+                        <p class="text-gray-600 mt-2"><strong>Invoice No:</strong> <span id="invoice-view-no"></span></p>
+                        <p class="text-gray-600"><strong>Date:</strong> <span id="invoice-view-date"></span></p>
+                        <p class="text-gray-600"><strong>Due Date:</strong> <span id="invoice-view-due-date"></span></p>
+                    </div>
+                </div>
+                
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase mb-2">BILL TO:</h3>
+                    <p class="text-gray-800 font-bold text-lg" id="invoice-view-student-name"></p>
+                    <p class="text-gray-600"><strong>Admission No:</strong> <span id="invoice-view-adm-no"></span></F>
+                    <p class="text-gray-600"><strong>Class:</strong> <span id="invoice-view-class"></span></p>
+                    <p class="text-gray-600"><strong>Parent:</strong> <span id="invoice-view-parent"></span></p>
+                </div>
+                
+                <table class="min-w-full divide-y divide-gray-300 mb-8">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 uppercase">Description</th>
+                            <th class="px-4 py-2 text-right text-sm font-semibold text-gray-700 uppercase">Total Due</th>
+                            <th class="px-4 py-2 text-right text-sm font-semibold text-gray-700 uppercase">Amount Paid</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td id="invoice-view-desc" class="px-4 py-3">Tuition Fee</td>
+                            <td id="invoice-view-total-due" class="px-4 py-3 text-right">₹5,000.00</td>
+                            <td id="invoice-view-amount-paid" class="px-4 py-3 text-right">₹2,500.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="flex justify-between items-center border-t pt-4">
+                    <div>
+                        <p class="text-gray-600"><strong>Payment Method:</strong> <span id="invoice-view-method"></span></p>
+                        <p id="invoice-school-whatsapp" class="text-gray-600 text-sm mt-4">Contact us via WhatsApp: +91 9876543210</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gray-600">Total Paid:</p>
+                        <p class="text-3xl font-bold text-gray-800" id="invoice-view-total-paid-footer"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end space-x-4 bg-gray-100 p-4 rounded-b-lg">
+                <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                <button type="button" id="invoice-print-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-print mr-2"></i>Print Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="manage-class-modal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <h3 class="text-xl font-semibold mb-4">Manage Classes</h3>
+            <form id="add-class-form" class="flex items-center space-x-2 mb-4">
+                <input type="text" id="class-name" placeholder="New Class Name (e.g., Class 6)" class="form-input flex-1" required>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add</button>
+            </form>
+            <div class="max-h-64 overflow-y-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Class Name</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-list-table" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="multi-pay-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold mb-4">Create Grouped Payment</h3>
+            <form id="multi-pay-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="multi-pay-student" class="block text-sm font-medium text-gray-700">Select Student</label>
+                        <select id="multi-pay-student" class="form-select mt-1" required>
+                            <option value="">-- Select a student --</option>
+                            </select>
+                    </div>
+                    
+                    <div id="multi-pay-fees-container" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700">Pending Fees</label>
+                        <div id="multi-pay-fees-list" class="mt-1 max-h-48 overflow-y-auto border rounded-md p-2 space-y-2">
+                            </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div id="multi-pay-details" class="hidden">
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="multi-pay-invoice" placeholder="Invoice Number (manual)" class="form-input" required>
+                            <input type="text" id="multi-pay-date" placeholder="Payment Date" class="form-input date-picker" required>
+                            <select id="multi-pay-method" class="form-select" required>
+                                <option value="Cash">Cash</option>
+                                <option value="Online">Online</option>
+                                <option value="Card">Card</option>
+                            </select>
+                            <div class="flex items-center justify-end md:col-span-2">
+                                <span class="text-lg font-semibold">Total:</span>
+                                <span id="multi-pay-total" class="text-xl font-bold text-blue-600 ml-2">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" class="modal-close-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" id="multi-pay-submit-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50" disabled>
+                        Record Payment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
